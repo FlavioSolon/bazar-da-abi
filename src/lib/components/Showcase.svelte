@@ -1,4 +1,5 @@
 <script>
+	import { fade, fly } from 'svelte/transition';
 	// Showcase Section (Vitrine)
 	const products = [
 		{
@@ -40,7 +41,7 @@
 	];
 </script>
 
-<section id="vitrine" class="py-20 px-6 bg-[var(--color-deep-forest)] relative overflow-hidden">
+<section id="vitrine" class="py-24 px-6 bg-[var(--color-deep-forest)] relative overflow-hidden">
 	<!-- Subtle Fern Texture Overlay (CSS pattern simulation) -->
 	<div
 		class="absolute inset-0 opacity-5 pointer-events-none"
@@ -49,16 +50,25 @@
 
 	<div class="container mx-auto relative z-10">
 		<div class="text-center mb-16">
-			<h2 class="font-display text-5xl text-[var(--color-cream)] mb-4">A Vitrine</h2>
+			<h2
+				class="font-display text-5xl text-[var(--color-cream)] mb-4"
+				in:fly={{ y: -20, duration: 1000 }}
+			>
+				A Vitrine
+			</h2>
 			<div class="w-24 h-1 bg-[var(--color-sunset-orange)] mx-auto rounded-full"></div>
 		</div>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-			{#each products as product}
+			{#each products as product, i}
 				<div
-					class="group bg-white p-4 pb-8 shadow-xl transform rotate-1 hover:rotate-0 hover:scale-105 transition duration-300 ease-out cursor-pointer"
+					class="group bg-white p-4 pb-8 shadow-xl transform transition duration-300 ease-out hover:scale-105 hover:z-10 relative"
+					style="border-radius: {i % 2 === 0
+						? '2% 1% 2% 1% / 1% 2% 1% 2%'
+						: '1% 2% 1% 2% / 2% 1% 2% 1%'};"
+					in:fly={{ y: 50, duration: 800, delay: i * 100 }}
 				>
-					<div class="aspect-[4/5] overflow-hidden mb-4 bg-gray-200">
+					<div class="aspect-[4/5] overflow-hidden mb-4 bg-gray-200 rounded-sm">
 						<img src={product.img} alt={product.title} class="w-full h-full object-cover" />
 					</div>
 					<div class="text-center">

@@ -1,5 +1,6 @@
 <script>
 	import sorrisao from '$lib/assets/sorrisao.jpeg';
+	import { fade, fly } from 'svelte/transition';
 	// Hero Section
 </script>
 
@@ -10,22 +11,31 @@
 	<div
 		class="absolute inset-0 opacity-40 bg-gradient-to-b from-black/30 to-[var(--color-deep-forest)]"
 	>
-		<div class="w-full h-full bg-cover bg-center" style="background-image: url({sorrisao});"></div>
+		<div
+			class="w-full h-full bg-cover bg-center"
+			style="background-image: url({sorrisao});"
+			in:fade={{ duration: 1500 }}
+		></div>
 	</div>
 
 	<div class="relative z-10 flex h-full flex-col items-center justify-end pb-32 px-6 text-center">
 		<h1
 			class="font-display mb-4 text-6xl md:text-8xl drop-shadow-lg animate-[float_6s_ease-in-out_infinite]"
+			in:fly={{ y: 50, duration: 1000, delay: 300 }}
 		>
 			Bazar da Abi
 		</h1>
-		<p class="font-body mb-8 text-xl md:text-2xl font-light tracking-wide max-w-2xl">
+		<p
+			class="font-body mb-8 text-xl md:text-2xl font-light tracking-wide max-w-2xl"
+			in:fly={{ y: 30, duration: 1000, delay: 600 }}
+		>
 			Do meu armário para novas histórias. Desapegos com propósito.
 		</p>
 
 		<a
 			href="#vitrine"
 			class="bg-[var(--color-sunset-orange)] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 hover:shadow-xl text-lg inline-block"
+			in:fly={{ y: 20, duration: 1000, delay: 900 }}
 		>
 			Ver Peças
 		</a>
