@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+@theme {
+  --font-display: "Caveat", cursive;
+  --font-body: "Montserrat", sans-serif;
+  --font-alt: "Nunito", sans-serif;
+
+  --color-deep-forest: #1a3c34; /* Deep Forest Green */
+  --color-navy-blue: #0f172a; /* Navy Blue / Slate 900-ish */
+  --color-sunset-orange: #f97316; /* Orange 500 */
+  --color-cream: #fdfbf7; /* Off-white/Cream */
+  
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+}
+
+body {
+  background-color: var(--color-deep-forest);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
