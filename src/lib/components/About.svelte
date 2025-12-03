@@ -14,7 +14,7 @@
 				></div>
 				<img
 					src={bibiCrias}
-					alt="Abi com crianças"
+					alt="Ábi com crianças"
 					class="relative rounded-lg shadow-2xl w-full object-cover aspect-[3/4]"
 				/>
 			</div>
@@ -22,7 +22,7 @@
 
 		<!-- Text Column -->
 		<div class="w-full md:w-1/2 space-y-6" in:fly={{ x: 50, duration: 1000, delay: 400 }}>
-			<h2 class="font-display text-5xl text-[var(--color-sunset-orange)]">Sobre a Abi</h2>
+			<h2 class="font-display text-5xl text-[var(--color-sunset-orange)]">Sobre a Ábi</h2>
 			<p class="font-body text-lg leading-relaxed opacity-90">
 				Design & Missio Dei. Acredito que cada peça de roupa carrega uma história, e agora elas
 				estão prontas para viver novas aventuras com você.

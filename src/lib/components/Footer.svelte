@@ -19,17 +19,18 @@
 			<a href="#" class="hover:text-[var(--color-sunset-orange)] transition"> Contato </a>
 		</div>
 
-		<p class="font-body text-sm opacity-60 mb-4">
-			&copy; {new Date().getFullYear()} Bazar da Abi. Feito com amor.
-		</p>
-
-		<div class="w-8 h-8 opacity-50">
-			<!-- Simple Tulip Icon SVG Placeholder -->
-			<svg viewBox="0 0 24 24" fill="currentColor">
+		<p class="font-body text-sm opacity-60 mb-4 flex items-center justify-center gap-2">
+			&copy; {new Date().getFullYear()} Bazar da Ábi. Feito com amor
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="currentColor"
+				class="w-4 h-4 text-green-600"
+			>
 				<path
-					d="M12 2C9 2 7 4 7 7C7 10 9 12 12 12C15 12 17 10 17 7C17 4 15 2 12 2ZM12 14C8 14 4 16 4 20V22H20V20C20 16 16 14 12 14Z"
+					d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3.25 7.75 3.25c2.1 0 3.96 1.2 4.81 2.89a5.49 5.49 0 014.81-2.89c3.036 0 5.5 2.072 5.5 5.002 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"
 				/>
 			</svg>
-		</div>
+		</p>
 	</div>
 </footer>

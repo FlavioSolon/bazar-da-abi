@@ -79,7 +79,7 @@
 							{product.price}
 						</p>
 						<button
-							class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[var(--color-deep-forest)] text-white px-6 py-2 rounded-full text-sm uppercase tracking-wider"
+							class="mt-4 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 bg-[var(--color-deep-forest)] text-white px-6 py-2 rounded-full text-sm uppercase tracking-wider"
 						>
 							Eu Quero
 						</button>

@@ -23,7 +23,7 @@
 			class="font-display mb-4 text-6xl md:text-8xl drop-shadow-lg animate-[float_6s_ease-in-out_infinite]"
 			in:fly={{ y: 50, duration: 1000, delay: 300 }}
 		>
-			Bazar da Abi
+			Bazar da Ábi
 		</h1>
 		<p
 			class="font-body mb-8 text-xl md:text-2xl font-light tracking-wide max-w-2xl"
