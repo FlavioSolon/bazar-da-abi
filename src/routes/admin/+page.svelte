@@ -1,6 +1,7 @@
 <script>
-	import { fade, fly, slide } from 'svelte/transition';
+	import { fade, fly, slide, scale } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
 
 	export let data;
 	export let form;
@@ -9,8 +10,13 @@
 	let selectedCategory = 'Todos';
 	let showAddForm = false;
 	let isAuthenticated = false;
+	let isChecking = true;
 	let passwordInput = '';
 	let authError = false;
+
+	// Delete Modal State
+	let showDeleteModal = false;
+	let productToDelete = null;
 
 	const categories = [
 		'Todos',
@@ -27,6 +33,7 @@
 		if (sessionStorage.getItem('admin_authenticated') === 'true') {
 			isAuthenticated = true;
 		}
+		isChecking = false;
 	});
 
 	function handleLogin() {
@@ -41,6 +48,16 @@
 		}
 	}
 
+	function promptDelete(id) {
+		productToDelete = id;
+		showDeleteModal = true;
+	}
+
+	function closeDeleteModal() {
+		showDeleteModal = false;
+		setTimeout(() => (productToDelete = null), 300); // Clear after animation
+	}
+
 	$: filteredProducts = data.products.filter((product) => {
 		const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase());
 		const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
@@ -48,7 +65,9 @@
 	});
 </script>
 
-{#if !isAuthenticated}
+{#if isChecking}
+	<div class="min-h-screen bg-gray-50"></div>
+{:else if !isAuthenticated}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-deep-forest)]"
 		in:fade
@@ -151,7 +170,12 @@
 
 				{#if showAddForm}
 					<div transition:slide class="border-t border-gray-100 p-6 bg-gray-50/50">
-						<form method="POST" action="?/create" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<form
+							method="POST"
+							action="?/create"
+							use:enhance
+							class="grid grid-cols-1 md:grid-cols-2 gap-6"
+						>
 							<div class="md:col-span-2">
 								<label
 									class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
@@ -320,7 +344,12 @@
 										{product.price}
 									</td>
 									<td class="px-6 py-4 text-center">
-										<form method="POST" action="?/toggleVisibility" class="inline-block">
+										<form
+											method="POST"
+											action="?/toggleVisibility"
+											use:enhance
+											class="inline-block"
+										>
 											<input type="hidden" name="id" value={product.id} />
 											<input type="hidden" name="is_visible" value={product.is_visible} />
 											<button
@@ -336,36 +365,26 @@
 										</form>
 									</td>
 									<td class="px-6 py-4 text-right">
-										<form
-											method="POST"
-											action="?/delete"
-											class="inline-block"
-											on:submit|preventDefault={(e) =>
-												confirm('Tem certeza que deseja excluir este produto?') &&
-												e.target.submit()}
+										<button
+											on:click={() => promptDelete(product.id)}
+											class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
+											title="Excluir"
 										>
-											<input type="hidden" name="id" value={product.id} />
-											<button
-												type="submit"
-												class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
-												title="Excluir"
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="h-5 w-5"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
 											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													class="h-5 w-5"
-													fill="none"
-													viewBox="0 0 24 24"
-													stroke="currentColor"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-													/>
-												</svg>
-											</button>
-										</form>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+												/>
+											</svg>
+										</button>
 									</td>
 								</tr>
 							{/each}
@@ -395,29 +414,25 @@
 									>
 										{product.category}
 									</span>
-									<form
-										method="POST"
-										action="?/delete"
-										on:submit|preventDefault={(e) => confirm('Excluir?') && e.target.submit()}
+									<button
+										on:click={() => promptDelete(product.id)}
+										class="text-gray-400 hover:text-red-500 -mt-1 -mr-1 p-2"
 									>
-										<input type="hidden" name="id" value={product.id} />
-										<button type="submit" class="text-gray-400 hover:text-red-500 -mt-1 -mr-1 p-2">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												class="h-5 w-5"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-												/>
-											</svg>
-										</button>
-									</form>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="h-5 w-5"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+											/>
+										</svg>
+									</button>
 								</div>
 
 								<h3
@@ -428,7 +443,12 @@
 								<p class="text-[var(--color-sunset-orange)] font-bold mb-3">{product.price}</p>
 
 								<div class="flex items-center justify-between">
-									<form method="POST" action="?/toggleVisibility" class="flex items-center gap-2">
+									<form
+										method="POST"
+										action="?/toggleVisibility"
+										use:enhance
+										class="flex items-center gap-2"
+									>
 										<input type="hidden" name="id" value={product.id} />
 										<input type="hidden" name="is_visible" value={product.is_visible} />
 										<span class="text-xs text-gray-500 font-medium"
@@ -459,4 +479,38 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Delete Confirmation Modal -->
+	{#if showDeleteModal}
+		<div
+			class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+			transition:fade
+		>
+			<div
+				class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 text-center"
+				transition:scale
+			>
+				<h3 class="font-display text-2xl text-[var(--color-deep-forest)] mb-2">Excluir Produto?</h3>
+				<p class="text-gray-500 mb-6">Essa ação não pode ser desfeita.</p>
+				<div class="flex gap-4 justify-center">
+					<button
+						on:click={closeDeleteModal}
+						class="px-6 py-2 rounded-full border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-colors"
+					>
+						Cancelar
+					</button>
+					<form method="POST" action="?/delete" use:enhance>
+						<input type="hidden" name="id" value={productToDelete} />
+						<button
+							type="submit"
+							on:click={closeDeleteModal}
+							class="px-6 py-2 rounded-full bg-red-500 text-white font-bold hover:bg-red-600 shadow-lg transition-colors"
+						>
+							Excluir
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	{/if}
 {/if}
