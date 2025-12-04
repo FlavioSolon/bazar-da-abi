@@ -1,11 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase Env Vars missing:', { supabaseUrl, supabaseAnonKey });
-    throw new Error('VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set in .env');
-}
+const supabaseUrl = 'https://lzhkllanoocytcspscqc.supabase.co'
+const supabaseAnonKey = 'sb_publishable_qLQwV3h6IkPYw2uyGm2kLQ_SZJm-KTh'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
