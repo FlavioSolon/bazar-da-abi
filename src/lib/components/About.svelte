@@ -23,19 +23,16 @@
 		<!-- Text Column -->
 		<div class="w-full md:w-1/2 space-y-6" in:fly={{ x: 50, duration: 1000, delay: 400 }}>
 			<h2 class="font-display text-5xl text-[var(--color-sunset-orange)]">Sobre a Ábi</h2>
-			<p class="font-body text-lg leading-relaxed opacity-90">
-				Design & Missio Dei. Acredito que cada peça de roupa carrega uma história, e agora elas
-				estão prontas para viver novas aventuras com você.
-			</p>
+			<div class="pt-4">
+				<p class="font-display text-3xl opacity-80">
+					"Creio para compreender, e compreendo para crer."
+				</p>
+				<p class="font-body text-sm mt-2 opacity-60">— Agostinho de Hipona</p>
+			</div>
 			<p class="font-body text-lg leading-relaxed opacity-90">
 				Todo o valor arrecadado neste bazar tem um propósito maior: apoiar missões e levar amor a
 				quem precisa. Ao levar uma peça, você também está fazendo parte dessa jornada.
 			</p>
-
-			<!-- Signature or Quote -->
-			<div class="pt-4">
-				<p class="font-display text-3xl opacity-80">"Credo ut intelligan, intelligo ut credan"</p>
-			</div>
 		</div>
 	</div>
 
