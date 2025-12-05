@@ -41,7 +41,7 @@
 		'Todos',
 		'Blazer',
 		'Short',
-		'Tênis',
+		'Calçados',
 		'Acessórios',
 		'Camisa',
 		'Calças',

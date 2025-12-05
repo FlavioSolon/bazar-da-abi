@@ -17,7 +17,7 @@
 		'Todos',
 		'Blazer',
 		'Short',
-		'Tênis',
+		'Calçados',
 		'Acessórios',
 		'Camisa',
 		'Calças',
@@ -94,6 +94,36 @@
 		name="description"
 		content="Bazar da Abi - Roupas, acessórios e muito mais. Todo valor arrecadado apoia missões."
 	/>
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://bazar-da-abi.vercel.app/" />
+	<meta property="og:title" content="Bazar da Abi | Desapegos com Propósito" />
+	<meta
+		property="og:description"
+		content="Do meu armário para novas histórias. Desapegos com propósito."
+	/>
+	<meta property="og:image" content="https://bazar-da-abi.vercel.app/og-image.png" />
+	<meta property="og:image:type" content="image/png" />
+	<meta property="og:site_name" content="Bazar da Abi" />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content="https://bazar-da-abi.vercel.app/" />
+	<meta property="twitter:title" content="Bazar da Abi | Desapegos com Propósito" />
+	<meta
+		property="twitter:description"
+		content="Do meu armário para novas histórias. Desapegos com propósito."
+	/>
+	<meta property="twitter:image" content="https://bazar-da-abi.vercel.app/og-image.png" />
+
+	<!-- Schema.org / Google / WhatsApp (fallback) -->
+	<meta itemprop="name" content="Bazar da Abi | Desapegos com Propósito" />
+	<meta
+		itemprop="description"
+		content="Do meu armário para novas histórias. Desapegos com propósito."
+	/>
+	<meta itemprop="image" content="https://bazar-da-abi.vercel.app/og-image.png" />
 </svelte:head>
 
 <main class="w-full bg-gray-50">
