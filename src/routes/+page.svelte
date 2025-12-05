@@ -62,6 +62,23 @@
 			document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth' });
 		}
 	}
+
+	function getWhatsAppLink(product) {
+		if (!product.buy_link) return '';
+
+		// Check if it's a WhatsApp link
+		if (product.buy_link.includes('wa.me') || product.buy_link.includes('whatsapp.com')) {
+			const price = product.price.startsWith('R$') ? product.price : `R$ ${product.price}`;
+			const message = `Olá! Vi este produto no Bazar da Abi e fiquei interessada:\n\n*${product.title}*\nPreço: ${price}\n\nAinda está disponível?`;
+			const encodedMessage = encodeURIComponent(message);
+
+			// If link already has params, append with &, otherwise ?
+			const separator = product.buy_link.includes('?') ? '&' : '?';
+			return `${product.buy_link}${separator}text=${encodedMessage}`;
+		}
+
+		return product.buy_link;
+	}
 </script>
 
 <svelte:head>
@@ -210,7 +227,7 @@
 
 								{#if product.buy_link}
 									<a
-										href={product.buy_link}
+										href={getWhatsAppLink(product)}
 										target="_blank"
 										rel="noopener noreferrer"
 										class="inline-block w-full bg-[var(--color-deep-forest)] text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider hover:bg-[var(--color-sunset-orange)] transition-colors duration-300 shadow-md hover:shadow-lg"
