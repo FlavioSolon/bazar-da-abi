@@ -43,6 +43,13 @@
 				parseFloat(a.price.replace('R$', '').replace(',', '.').trim())
 			);
 		} else {
+			// Default sort: Position (ascending), then Newest (ID descending)
+			const posA = a.position !== null && a.position !== undefined ? a.position : 999999;
+			const posB = b.position !== null && b.position !== undefined ? b.position : 999999;
+
+			if (posA !== posB) {
+				return posA - posB;
+			}
 			return b.id - a.id;
 		}
 	});
@@ -159,7 +166,7 @@
 								bind:value={sortBy}
 								class="w-full md:w-auto appearance-none bg-[var(--color-cream)] text-[var(--color-deep-forest)] font-bold py-2 pl-4 pr-10 rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--color-sunset-orange)] cursor-pointer text-base sm:text-sm"
 							>
-								<option value="newest">Mais Recentes</option>
+								<option value="newest">Destaques</option>
 								<option value="price-asc">Menor Preço</option>
 								<option value="price-desc">Maior Preço</option>
 							</select>

@@ -213,5 +213,51 @@ export const actions = {
         }
 
         return { success: true };
+    },
+
+    updateOrder: async ({ request }) => {
+        const formData = await request.formData();
+        const orderJson = formData.get('order')?.toString();
+
+        if (!orderJson) {
+            return fail(400, { message: 'Dados de ordenação inválidos.' });
+        }
+
+        let order;
+        try {
+            order = JSON.parse(orderJson);
+        } catch (e) {
+            return fail(400, { message: 'Formato de dados inválido.' });
+        }
+
+        // Use upsert to update multiple rows efficiently if possible, 
+        // but Supabase/PostgREST doesn't support bulk update with different values easily in one query without a function.
+        // We can loop. Since it's admin only and not high traffic, it's acceptable.
+        // Or we can use a stored procedure if performance is an issue.
+        // For < 100 items, looping is fine.
+
+        // CORREÇÃO:
+        // Em vez de usar upsert (que exige todos os campos obrigatórios),
+        // vamos percorrer a lista e atualizar apenas a posição de cada ID.
+
+        const updates = order.map(async (item) => {
+            return supabase
+                .from('products')
+                .update({ position: item.position }) // Só muda a posição
+                .eq('id', item.id); // Onde o ID for igual
+        });
+
+        // Promise.all faz todos os updates rodarem "ao mesmo tempo" (paralelo)
+        const results = await Promise.all(updates);
+
+        // Verifica se algum deu erro
+        const hasError = results.some(result => result.error);
+
+        if (hasError) {
+            console.error('Erro ao salvar a ordem.');
+            return fail(500, { message: 'Erro ao salvar a ordem.' });
+        }
+
+        return { success: true };
     }
 };
