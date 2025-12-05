@@ -150,6 +150,15 @@
 		reorderItems = e.detail.items;
 	}
 
+	function transformDraggedElement(draggedEl, data, index) {
+		draggedEl.style.opacity = '0.9';
+		draggedEl.style.transform = 'scale(1.02)';
+		draggedEl.style.boxShadow =
+			'0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+		draggedEl.style.zIndex = '10000';
+		draggedEl.style.cursor = 'grabbing';
+	}
+
 	async function saveOrder() {
 		isSavingOrder = true;
 
@@ -477,6 +486,7 @@
 						use:dndzone={{
 							items: reorderItems,
 							flipDurationMs: 300,
+							transformDraggedElement,
 							dropTargetStyle: {
 								outline: '2px solid var(--color-sunset-orange)',
 								borderRadius: '0.5rem'
