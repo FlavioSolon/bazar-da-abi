@@ -19,6 +19,9 @@
 	let showDeleteModal = false;
 	let productToDelete = null;
 
+	// Edit State
+	let editingProduct = null;
+
 	const categories = [
 		'Todos',
 		'Blazer',
@@ -59,6 +62,20 @@
 	function closeDeleteModal() {
 		showDeleteModal = false;
 		setTimeout(() => (productToDelete = null), 300); // Clear after animation
+	}
+
+	function startEdit(product) {
+		editingProduct = product;
+		showAddForm = true;
+		// Scroll to form
+		setTimeout(() => {
+			document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
+		}, 100);
+	}
+
+	function cancelEdit() {
+		editingProduct = null;
+		showAddForm = false;
 	}
 
 	$: filteredProducts = data.products.filter((product) => {
@@ -116,6 +133,7 @@
 			await update();
 			isSubmitting = false;
 			showAddForm = false; // Close form on success
+			editingProduct = null;
 		};
 	};
 </script>
@@ -239,13 +257,30 @@
 
 				{#if showAddForm}
 					<div transition:slide class="border-t border-gray-100 p-6 bg-gray-50/50">
+						<div class="flex justify-between items-center mb-4">
+							<h3 class="text-lg font-bold text-[var(--color-deep-forest)]">
+								{editingProduct ? 'Editar Produto' : 'Novo Produto'}
+							</h3>
+							{#if editingProduct}
+								<button
+									on:click={cancelEdit}
+									class="text-sm text-red-500 hover:underline font-bold"
+								>
+									Cancelar Edição
+								</button>
+							{/if}
+						</div>
 						<form
 							method="POST"
-							action="?/create"
+							action={editingProduct ? '?/update' : '?/create'}
 							use:enhance={handleSubmit}
 							enctype="multipart/form-data"
 							class="grid grid-cols-1 md:grid-cols-2 gap-6"
 						>
+							{#if editingProduct}
+								<input type="hidden" name="id" value={editingProduct.id} />
+							{/if}
+
 							<div class="md:col-span-2">
 								<label
 									class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
@@ -257,6 +292,7 @@
 									name="title"
 									type="text"
 									placeholder="Ex: Vestido Floral Vintage"
+									value={editingProduct?.title || ''}
 									required
 								/>
 							</div>
@@ -272,6 +308,7 @@
 									name="price"
 									type="text"
 									placeholder="Ex: R$ 45,00"
+									value={editingProduct?.price || ''}
 									required
 								/>
 							</div>
@@ -285,9 +322,10 @@
 									class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all bg-white text-base text-[var(--color-deep-forest)]"
 									id="category"
 									name="category"
+									value={editingProduct?.category || ''}
 									required
 								>
-									<option value="" disabled selected>Selecione...</option>
+									<option value="" disabled selected={!editingProduct}>Selecione...</option>
 									{#each categories.filter((c) => c !== 'Todos') as cat}
 										<option value={cat}>{cat}</option>
 									{/each}
@@ -298,15 +336,21 @@
 								<div>
 									<label
 										class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
-										for="image_1">Imagem Principal (Obrigatória)</label
+										for="image_1"
+										>Imagem Principal {editingProduct ? '(Opcional)' : '(Obrigatória)'}</label
 									>
+									{#if editingProduct?.image_1}
+										<div class="mb-2 text-xs text-gray-500">
+											Atual: {editingProduct.image_1.split('/').pop()}
+										</div>
+									{/if}
 									<input
 										class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-deep-forest)] file:text-white hover:file:bg-[var(--color-sunset-orange)]"
 										id="image_1"
 										name="image_1"
 										type="file"
-										accept="image/*"
-										required
+										accept="image/*,.heic,.heif"
+										required={!editingProduct}
 									/>
 								</div>
 								<div>
@@ -314,12 +358,17 @@
 										class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
 										for="image_2">Imagem 2 (Opcional)</label
 									>
+									{#if editingProduct?.image_2}
+										<div class="mb-2 text-xs text-gray-500">
+											Atual: {editingProduct.image_2.split('/').pop()}
+										</div>
+									{/if}
 									<input
 										class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-deep-forest)] file:text-white hover:file:bg-[var(--color-sunset-orange)]"
 										id="image_2"
 										name="image_2"
 										type="file"
-										accept="image/*"
+										accept="image/*,.heic,.heif"
 									/>
 								</div>
 								<div>
@@ -327,12 +376,17 @@
 										class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
 										for="image_3">Imagem 3 (Opcional)</label
 									>
+									{#if editingProduct?.image_3}
+										<div class="mb-2 text-xs text-gray-500">
+											Atual: {editingProduct.image_3.split('/').pop()}
+										</div>
+									{/if}
 									<input
 										class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-deep-forest)] file:text-white hover:file:bg-[var(--color-sunset-orange)]"
 										id="image_3"
 										name="image_3"
 										type="file"
-										accept="image/*"
+										accept="image/*,.heic,.heif"
 									/>
 								</div>
 							</div>
@@ -348,6 +402,7 @@
 									name="buy_link"
 									type="text"
 									placeholder="https://wa.me/..."
+									value={editingProduct?.buy_link || 'https://wa.me/5592981496477'}
 									required
 								/>
 							</div>
@@ -358,7 +413,11 @@
 									type="submit"
 									disabled={isSubmitting}
 								>
-									{isSubmitting ? 'Salvando...' : 'Salvar Produto'}
+									{isSubmitting
+										? 'Salvando...'
+										: editingProduct
+											? 'Atualizar Produto'
+											: 'Salvar Produto'}
 								</button>
 							</div>
 						</form>
@@ -493,6 +552,26 @@
 									</td>
 									<td class="px-6 py-4 text-right">
 										<button
+											on:click={() => startEdit(product)}
+											class="text-gray-400 hover:text-[var(--color-sunset-orange)] transition-colors p-2 rounded-full hover:bg-orange-50 mr-2"
+											title="Editar"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="h-5 w-5"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+												/>
+											</svg>
+										</button>
+										<button
 											on:click={() => promptDelete(product.id)}
 											class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
 											title="Excluir"
@@ -565,6 +644,25 @@
 									>
 										{product.category}
 									</span>
+									<button
+										on:click={() => startEdit(product)}
+										class="text-gray-400 hover:text-[var(--color-sunset-orange)] -mt-1 -mr-1 p-2"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="h-5 w-5"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+											/>
+										</svg>
+									</button>
 									<button
 										on:click={() => promptDelete(product.id)}
 										class="text-gray-400 hover:text-red-500 -mt-1 -mr-1 p-2"

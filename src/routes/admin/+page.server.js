@@ -140,5 +140,78 @@ export const actions = {
         }
 
         return { success: true };
+    },
+
+    update: async ({ request }) => {
+        const formData = await request.formData();
+        const id = formData.get('id');
+        const title = formData.get('title');
+        const price = formData.get('price');
+        const buy_link = formData.get('buy_link');
+        const category = formData.get('category');
+
+        const image1File = formData.get('image_1');
+        const image2File = formData.get('image_2');
+        const image3File = formData.get('image_3');
+
+        if (!id || !title || !price || !buy_link || !category) {
+            return fail(400, { message: 'Por favor, preencha todos os campos obrigatórios.' });
+        }
+
+        const uploadFile = async (file) => {
+            if (!file || file.size === 0) return null;
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            try {
+                await s3.send(new PutObjectCommand({
+                    Bucket: 'products',
+                    Key: fileName,
+                    Body: buffer,
+                    ContentType: file.type,
+                    ACL: 'public-read'
+                }));
+                return `https://lzhkllanoocytcspscqc.supabase.co/storage/v1/object/public/products/${fileName}`;
+            } catch (err) {
+                console.error('S3 Upload Error:', err);
+                throw err;
+            }
+        };
+
+        const updates = {
+            title,
+            price,
+            buy_link,
+            category
+        };
+
+        try {
+            if (image1File && image1File.size > 0) {
+                updates.image_1 = await uploadFile(image1File);
+            }
+            if (image2File && image2File.size > 0) {
+                updates.image_2 = await uploadFile(image2File);
+            }
+            if (image3File && image3File.size > 0) {
+                updates.image_3 = await uploadFile(image3File);
+            }
+        } catch (err) {
+            return fail(500, { message: 'Erro ao fazer upload da imagem.' });
+        }
+
+        const { error } = await supabase
+            .from('products')
+            .update(updates)
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error updating product:', error);
+            return fail(500, { message: 'Erro ao atualizar produto.' });
+        }
+
+        return { success: true };
     }
 };
