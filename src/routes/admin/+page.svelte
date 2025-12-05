@@ -8,6 +8,10 @@
 
 	let searchTerm = '';
 	let selectedCategory = 'Todos';
+	let visibilityFilter = 'all'; // 'all', 'visible', 'hidden'
+	let currentPage = 1;
+	const itemsPerPage = 10;
+
 	let showAddForm = false;
 	let isAuthenticated = false;
 	let isChecking = true;
@@ -81,8 +85,37 @@
 	$: filteredProducts = data.products.filter((product) => {
 		const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase());
 		const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
-		return matchesSearch && matchesCategory;
+		const matchesVisibility =
+			visibilityFilter === 'all'
+				? true
+				: visibilityFilter === 'visible'
+					? product.is_visible
+					: !product.is_visible;
+
+		return matchesSearch && matchesCategory && matchesVisibility;
 	});
+
+	$: {
+		// Reset to page 1 when filters change
+		if (searchTerm || selectedCategory || visibilityFilter) {
+			currentPage = 1;
+		}
+	}
+
+	$: totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+	$: paginatedProducts = filteredProducts.slice(
+		(currentPage - 1) * itemsPerPage,
+		currentPage * itemsPerPage
+	);
+
+	function goToPage(page) {
+		if (page >= 1 && page <= totalPages) {
+			currentPage = page;
+			// Optional: Scroll to top of list
+			document.getElementById('products-list')?.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
 
 	// Custom enhance function to handle HEIC conversion
 	const handleSubmit = async ({ formData, cancel }) => {
@@ -451,10 +484,21 @@
 						{/each}
 					</select>
 				</div>
+
+				<div class="w-full md:w-auto">
+					<select
+						bind:value={visibilityFilter}
+						class="w-full md:w-48 px-4 py-2 rounded-lg border border-gray-200 focus:border-[var(--color-deep-forest)] focus:ring-1 focus:ring-[var(--color-deep-forest)] outline-none bg-white text-base text-[var(--color-deep-forest)]"
+					>
+						<option value="all">Todos Status</option>
+						<option value="visible">Visíveis</option>
+						<option value="hidden">Ocultos</option>
+					</select>
+				</div>
 			</div>
 
 			<!-- Products List -->
-			<div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+			<div id="products-list" class="bg-white shadow-xl rounded-2xl overflow-hidden">
 				<div class="p-6 border-b border-gray-100 flex justify-between items-center">
 					<h2 class="text-xl font-display text-[var(--color-deep-forest)]">
 						Produtos Cadastrados
@@ -477,7 +521,7 @@
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-gray-100">
-							{#each filteredProducts as product (product.id)}
+							{#each paginatedProducts as product (product.id)}
 								<tr class="hover:bg-gray-50 transition-colors group">
 									<td class="px-6 py-4">
 										<div class="flex items-center gap-4">
@@ -600,7 +644,7 @@
 
 				<!-- Mobile Cards -->
 				<div class="md:hidden grid grid-cols-1 gap-4 p-4 bg-gray-50">
-					{#each filteredProducts as product (product.id)}
+					{#each paginatedProducts as product (product.id)}
 						<div
 							class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex gap-4 items-start"
 							in:fly={{ y: 20, duration: 300 }}
@@ -723,6 +767,31 @@
 				{#if filteredProducts.length === 0}
 					<div class="p-12 text-center text-gray-400">
 						<p class="text-xl">Nenhum produto encontrado.</p>
+					</div>
+				{/if}
+
+				<!-- Pagination Controls -->
+				{#if totalPages > 1}
+					<div class="p-6 border-t border-gray-100 flex justify-center items-center gap-2">
+						<button
+							class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-[var(--color-deep-forest)] font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+							on:click={() => goToPage(currentPage - 1)}
+							disabled={currentPage === 1}
+						>
+							&lt;
+						</button>
+
+						<span class="text-sm font-bold text-[var(--color-deep-forest)] mx-2">
+							Página {currentPage} de {totalPages}
+						</span>
+
+						<button
+							class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-[var(--color-deep-forest)] font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+							on:click={() => goToPage(currentPage + 1)}
+							disabled={currentPage === totalPages}
+						>
+							&gt;
+						</button>
 					</div>
 				{/if}
 			</div>
