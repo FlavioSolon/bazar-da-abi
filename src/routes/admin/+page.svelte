@@ -106,11 +106,27 @@
 	function toggleReorder() {
 		isReordering = !isReordering;
 		if (isReordering) {
-			// Initialize reorder items with current filtered products (or all products if preferred)
-			// Use filtered products for reordering
+			// Sync filter state when entering mode
+			lastFilterState = JSON.stringify({ selectedCategory, searchTerm, visibilityFilter });
+
+			// Initialize items
+			reorderItems = [...filteredProducts].sort((a, b) => (a.position || 0) - (b.position || 0));
+			if (reorderItems.every((p) => !p.position)) {
+				reorderItems.sort((a, b) => b.id - a.id);
+			}
+		}
+	}
+
+	// Track filter state to only update reorderItems when filters actually change
+	let lastFilterState = JSON.stringify({ selectedCategory, searchTerm, visibilityFilter });
+
+	$: if (isReordering) {
+		const currentFilterState = JSON.stringify({ selectedCategory, searchTerm, visibilityFilter });
+		if (currentFilterState !== lastFilterState) {
+			lastFilterState = currentFilterState;
+			// Update reorderItems only when filters change
 			reorderItems = [...filteredProducts].sort((a, b) => (a.position || 0) - (b.position || 0));
 
-			// If positions are all 0 or null, fallback to id or created_at
 			if (reorderItems.every((p) => !p.position)) {
 				reorderItems.sort((a, b) => b.id - a.id);
 			}
@@ -405,6 +421,17 @@
 									Arraste os itens para mudar a ordem de exibição.
 								</p>
 							</div>
+
+							<!-- Category Filter for Reorder -->
+							<select
+								bind:value={selectedCategory}
+								class="px-4 py-2 rounded-lg border border-gray-200 focus:border-[var(--color-sunset-orange)] focus:ring-1 focus:ring-[var(--color-sunset-orange)] outline-none bg-white text-sm text-[var(--color-deep-forest)] font-bold"
+							>
+								{#each categories as cat}
+									<option value={cat}>{cat}</option>
+								{/each}
+							</select>
+
 							<button
 								type="button"
 								on:click={sortByCategories}
