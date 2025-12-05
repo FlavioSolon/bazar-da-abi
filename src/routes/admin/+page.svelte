@@ -13,6 +13,7 @@
 	let isChecking = true;
 	let passwordInput = '';
 	let authError = false;
+	let isSubmitting = false; // Loading state for submission
 
 	// Delete Modal State
 	let showDeleteModal = false;
@@ -65,6 +66,58 @@
 		const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
 		return matchesSearch && matchesCategory;
 	});
+
+	// Custom enhance function to handle HEIC conversion
+	const handleSubmit = async ({ formData, cancel }) => {
+		isSubmitting = true;
+
+		// Dynamically import heic2any to avoid SSR issues
+		const heic2any = (await import('heic2any')).default;
+
+		const processFile = async (fieldName) => {
+			const file = formData.get(fieldName);
+			if (
+				file &&
+				file.size > 0 &&
+				(file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif'))
+			) {
+				try {
+					console.log(`Converting ${fieldName}...`);
+					const convertedBlob = await heic2any({
+						blob: file,
+						toType: 'image/jpeg',
+						quality: 0.8
+					});
+
+					// Handle case where heic2any returns an array (for multi-image HEIC)
+					const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+
+					const newFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
+						type: 'image/jpeg'
+					});
+
+					formData.set(fieldName, newFile);
+					console.log(`${fieldName} converted to JPEG`);
+				} catch (error) {
+					console.error(`Error converting ${fieldName}:`, error);
+					// Optionally alert the user or let the server handle the invalid file
+					alert(`Erro ao converter imagem ${file.name}. Tente enviar uma JPG ou PNG.`);
+					cancel();
+					isSubmitting = false;
+				}
+			}
+		};
+
+		await processFile('image_1');
+		await processFile('image_2');
+		await processFile('image_3');
+
+		return async ({ update }) => {
+			await update();
+			isSubmitting = false;
+			showAddForm = false; // Close form on success
+		};
+	};
 </script>
 
 {#if isChecking}
@@ -189,7 +242,8 @@
 						<form
 							method="POST"
 							action="?/create"
-							use:enhance
+							use:enhance={handleSubmit}
+							enctype="multipart/form-data"
 							class="grid grid-cols-1 md:grid-cols-2 gap-6"
 						>
 							<div class="md:col-span-2">
@@ -240,19 +294,47 @@
 								</select>
 							</div>
 
-							<div>
-								<label
-									class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
-									for="image_url">URL da Imagem</label
-								>
-								<input
-									class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] placeholder-gray-400"
-									id="image_url"
-									name="image_url"
-									type="text"
-									placeholder="https://..."
-									required
-								/>
+							<div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div>
+									<label
+										class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
+										for="image_1">Imagem Principal (Obrigatória)</label
+									>
+									<input
+										class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-deep-forest)] file:text-white hover:file:bg-[var(--color-sunset-orange)]"
+										id="image_1"
+										name="image_1"
+										type="file"
+										accept="image/*"
+										required
+									/>
+								</div>
+								<div>
+									<label
+										class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
+										for="image_2">Imagem 2 (Opcional)</label
+									>
+									<input
+										class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-deep-forest)] file:text-white hover:file:bg-[var(--color-sunset-orange)]"
+										id="image_2"
+										name="image_2"
+										type="file"
+										accept="image/*"
+									/>
+								</div>
+								<div>
+									<label
+										class="block text-[var(--color-deep-forest)] text-sm font-bold mb-2"
+										for="image_3">Imagem 3 (Opcional)</label
+									>
+									<input
+										class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[var(--color-sunset-orange)] focus:ring-2 focus:ring-[var(--color-sunset-orange)]/20 outline-none transition-all text-[var(--color-deep-forest)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-deep-forest)] file:text-white hover:file:bg-[var(--color-sunset-orange)]"
+										id="image_3"
+										name="image_3"
+										type="file"
+										accept="image/*"
+									/>
+								</div>
 							</div>
 
 							<div>
@@ -272,10 +354,11 @@
 
 							<div class="md:col-span-2 flex justify-end mt-4">
 								<button
-									class="bg-[var(--color-deep-forest)] hover:bg-[var(--color-sunset-orange)] text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:-translate-y-1 hover:shadow-xl"
+									class="bg-[var(--color-deep-forest)] hover:bg-[var(--color-sunset-orange)] text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:-translate-y-1 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
 									type="submit"
+									disabled={isSubmitting}
 								>
-									Salvar Produto
+									{isSubmitting ? 'Salvando...' : 'Salvar Produto'}
 								</button>
 							</div>
 						</form>
@@ -339,12 +422,40 @@
 								<tr class="hover:bg-gray-50 transition-colors group">
 									<td class="px-6 py-4">
 										<div class="flex items-center gap-4">
-											<div class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-												<img
-													src={product.image_url}
-													alt={product.title}
-													class="h-full w-full object-cover"
-												/>
+											<div class="flex -space-x-4 hover:space-x-1 transition-all">
+												{#if product.image_1}
+													<div
+														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-30"
+													>
+														<img
+															src={product.image_1}
+															alt={product.title}
+															class="h-full w-full object-cover"
+														/>
+													</div>
+												{/if}
+												{#if product.image_2}
+													<div
+														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-20"
+													>
+														<img
+															src={product.image_2}
+															alt={product.title}
+															class="h-full w-full object-cover"
+														/>
+													</div>
+												{/if}
+												{#if product.image_3}
+													<div
+														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-10"
+													>
+														<img
+															src={product.image_3}
+															alt={product.title}
+															class="h-full w-full object-cover"
+														/>
+													</div>
+												{/if}
 											</div>
 											<span class="font-medium text-gray-900">{product.title}</span>
 										</div>
@@ -415,12 +526,36 @@
 							class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex gap-4 items-start"
 							in:fly={{ y: 20, duration: 300 }}
 						>
-							<div class="h-24 w-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-								<img
-									src={product.image_url}
-									alt={product.title}
-									class="h-full w-full object-cover"
-								/>
+							<div class="flex flex-col gap-2">
+								{#if product.image_1}
+									<div class="h-24 w-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+										<img
+											src={product.image_1}
+											alt={product.title}
+											class="h-full w-full object-cover"
+										/>
+									</div>
+								{/if}
+								<div class="flex gap-2">
+									{#if product.image_2}
+										<div class="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+											<img
+												src={product.image_2}
+												alt={product.title}
+												class="h-full w-full object-cover"
+											/>
+										</div>
+									{/if}
+									{#if product.image_3}
+										<div class="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+											<img
+												src={product.image_3}
+												alt={product.title}
+												class="h-full w-full object-cover"
+											/>
+										</div>
+									{/if}
+								</div>
 							</div>
 
 							<div class="flex-1 min-w-0">

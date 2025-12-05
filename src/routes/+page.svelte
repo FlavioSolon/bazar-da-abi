@@ -2,7 +2,8 @@
 	import Hero from '$lib/components/Hero.svelte';
 	import About from '$lib/components/About.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import { fade, fly } from 'svelte/transition';
+	import Carousel from '$lib/components/Carousel.svelte';
+	import { fly, fade } from 'svelte/transition';
 
 	export let data;
 
@@ -174,12 +175,19 @@
 							in:fly={{ y: 30, duration: 500, delay: i * 50 }}
 						>
 							<div class="aspect-[4/5] overflow-hidden mb-4 bg-gray-100 rounded-sm relative">
-								<img
-									src={product.image_url}
+								<Carousel
+									images={[product.image_1, product.image_2, product.image_3].filter(Boolean)}
 									alt={product.title}
-									class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-									loading="lazy"
 								/>
+								{#if !product.is_visible}
+									<div
+										class="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm z-20"
+									>
+										<span class="text-white font-bold px-4 py-2 border-2 border-white rounded-lg"
+											>VENDIDO</span
+										>
+									</div>
+								{/if}
 								<!-- Badge for Category -->
 								<span
 									class="absolute top-2 right-2 bg-[var(--color-deep-forest)] text-white text-xs font-bold px-2 py-1 rounded-sm opacity-90"

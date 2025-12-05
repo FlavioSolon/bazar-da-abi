@@ -28,3 +28,12 @@ on public.products
 for all
 using (true)
 with check (true);
+
+-- 1. Remove a coluna antiga
+ALTER TABLE public.products DROP COLUMN image_url;
+
+-- 2. Adiciona os 3 novos campos
+-- image_1 será obrigatória (NOT NULL), as outras opcionais
+ALTER TABLE public.products ADD COLUMN image_1 text NOT NULL DEFAULT ''; 
+ALTER TABLE public.products ADD COLUMN image_2 text;
+ALTER TABLE public.products ADD COLUMN image_3 text;

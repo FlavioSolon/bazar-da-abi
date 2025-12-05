@@ -6,7 +6,7 @@
 	class="bg-[var(--color-navy-blue)] text-[var(--color-cream)] py-12 border-t border-white/10"
 >
 	<div class="container mx-auto px-6 flex flex-col items-center justify-center text-center">
-		<h2 class="font-display text-4xl mb-6">Bazar da Abi</h2>
+		<h2 class="font-display text-4xl mb-6">Bazar da Ábi</h2>
 
 		<div class="flex space-x-6 mb-8">
 			<a
