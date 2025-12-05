@@ -72,28 +72,37 @@
 		class="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-deep-forest)]"
 		in:fade
 	>
+		<!-- Background Pattern -->
 		<div
-			class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-center relative overflow-hidden"
+			class="absolute inset-0 opacity-10 pointer-events-none"
+			style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 30px 30px;"
+		></div>
+
+		<div
+			class="bg-white/95 backdrop-blur-sm p-10 rounded-3xl shadow-2xl max-w-md w-full mx-4 text-center relative overflow-hidden border border-white/20"
+			in:scale={{ start: 0.95, duration: 400 }}
 		>
-			<!-- Decorative background element -->
+			<!-- Decorative header -->
 			<div
-				class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[var(--color-sunset-orange)] to-[var(--color-deep-forest)]"
+				class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-[var(--color-sunset-orange)] via-yellow-500 to-[var(--color-deep-forest)]"
 			></div>
 
-			<h2 class="font-display text-4xl text-[var(--color-deep-forest)] mb-2">
-				"Família significa que ninguém fica para trás."
-			</h2>
-			<p class="font-body text-gray-500 mb-8 text-sm">
-				Significa nunca abandonar, nunca desisitir.
-			</p>
+			<div class="mb-8 mt-2">
+				<h2 class="font-display text-4xl text-[var(--color-deep-forest)] mb-3 leading-tight">
+					Família significa que ninguém fica para trás.
+				</h2>
+				<p class="font-display text-2xl text-[var(--color-deep-forest)]/80 italic">
+					Significa nunca abandonar, nunca desisitir.
+				</p>
+			</div>
 
-			<form on:submit|preventDefault={handleLogin} class="space-y-4">
-				<div class="relative">
+			<form on:submit|preventDefault={handleLogin} class="space-y-6">
+				<div class="relative group">
 					<input
 						type="password"
 						bind:value={passwordInput}
 						placeholder="Palavra passe..."
-						class="w-full px-4 py-3 rounded-lg border-2 border-gray-100 focus:border-[var(--color-sunset-orange)] focus:ring-0 outline-none transition-all text-center text-lg text-[var(--color-deep-forest)] placeholder-gray-300 {authError
+						class="w-full px-6 py-4 rounded-xl border-2 border-gray-100 bg-gray-50 focus:bg-white focus:border-[var(--color-sunset-orange)] focus:ring-4 focus:ring-[var(--color-sunset-orange)]/10 outline-none transition-all text-center text-xl text-[var(--color-deep-forest)] placeholder-gray-300 font-display tracking-widest {authError
 							? 'border-red-500 animate-pulse'
 							: ''}"
 						autofocus
@@ -102,21 +111,26 @@
 
 				<button
 					type="submit"
-					class="w-full bg-[var(--color-deep-forest)] hover:bg-[var(--color-sunset-orange)] text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:-translate-y-1 hover:shadow-xl"
+					class="w-full bg-gradient-to-r from-[var(--color-deep-forest)] to-[#2a5c50] hover:from-[var(--color-sunset-orange)] hover:to-[#ff8c3a] text-white font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl text-lg tracking-wide"
 				>
 					Entrar
 				</button>
 			</form>
 
 			{#if authError}
-				<p class="text-red-500 text-xs mt-4 font-bold" in:fly={{ y: 10 }}>
-					Palavra passe incorreta.
+				<p
+					class="text-red-500 text-sm mt-4 font-bold bg-red-50 py-2 px-4 rounded-lg inline-block"
+					in:fly={{ y: 10 }}
+				>
+					Palavra passe incorreta. Tente novamente.
 				</p>
 			{/if}
+
+			<div class="mt-8 text-xs text-gray-400 font-sans">Área restrita para a família</div>
 		</div>
 	</div>
 {:else}
-	<div class="min-h-screen bg-gray-50 pb-20" in:fade>
+	<div class="min-h-screen bg-gray-50 pb-20 admin-font" in:fade>
 		<!-- Header -->
 		<header
 			class="bg-[var(--color-deep-forest)] text-[var(--color-cream)] py-6 px-4 shadow-lg sticky top-0 z-40"
@@ -514,3 +528,19 @@
 		</div>
 	{/if}
 {/if}
+
+<style>
+	:global(.admin-font) {
+		--font-display: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+		font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+	}
+
+	:global(.admin-font h1),
+	:global(.admin-font h2),
+	:global(.admin-font h3),
+	:global(.admin-font h4),
+	:global(.admin-font h5),
+	:global(.admin-font h6) {
+		font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+	}
+</style>
