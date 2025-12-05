@@ -77,16 +77,10 @@
 		id="vitrine"
 		class="py-24 px-4 sm:px-6 bg-[var(--color-deep-forest)] relative min-h-[800px]"
 	>
-		<!-- Subtle Fern Texture Overlay -->
-		<div
-			class="absolute inset-0 opacity-5 pointer-events-none"
-			style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"
-		></div>
-
 		<div class="container mx-auto relative z-10 max-w-7xl">
 			<div class="text-center mb-8">
 				<h2
-					class="font-display text-4xl md:text-5xl text-[var(--color-cream)] mb-4"
+					class="font-curly text-4xl md:text-5xl text-[var(--color-cream)] mb-4"
 					in:fly={{ y: -20, duration: 1000 }}
 				>
 					A Vitrine
