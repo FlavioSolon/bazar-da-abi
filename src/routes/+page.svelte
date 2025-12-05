@@ -20,7 +20,9 @@
 		'Acessórios',
 		'Camisa',
 		'Calças',
-		'Vestidos'
+		'Vestidos',
+		'Casacos/Moletons',
+		'Outros'
 	];
 
 	// Reactive Logic
@@ -194,7 +196,7 @@
 										{product.title}
 									</h3>
 									<p class="font-body text-xl font-bold text-[var(--color-sunset-orange)] mb-4">
-										{product.price}
+										R$ {product.price}
 									</p>
 								</div>
 

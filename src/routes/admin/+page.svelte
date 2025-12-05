@@ -26,7 +26,9 @@
 		'Acessórios',
 		'Camisa',
 		'Calças',
-		'Vestidos'
+		'Vestidos',
+		'Casacos/Moletons',
+		'Outros'
 	];
 
 	onMount(() => {
