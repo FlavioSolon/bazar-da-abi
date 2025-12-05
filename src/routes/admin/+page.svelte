@@ -23,6 +23,10 @@
 	let showDeleteModal = false;
 	let productToDelete = null;
 
+	// Image Modal State
+	let showImageModal = false;
+	let selectedImage = null;
+
 	// Edit State
 	let editingProduct = null;
 
@@ -66,6 +70,16 @@
 	function closeDeleteModal() {
 		showDeleteModal = false;
 		setTimeout(() => (productToDelete = null), 300); // Clear after animation
+	}
+
+	function openImageModal(url) {
+		selectedImage = url;
+		showImageModal = true;
+	}
+
+	function closeImageModal() {
+		showImageModal = false;
+		setTimeout(() => (selectedImage = null), 300);
 	}
 
 	function startEdit(product) {
@@ -373,8 +387,26 @@
 										>Imagem Principal {editingProduct ? '(Opcional)' : '(Obrigatória)'}</label
 									>
 									{#if editingProduct?.image_1}
-										<div class="mb-2 text-xs text-gray-500">
-											Atual: {editingProduct.image_1.split('/').pop()}
+										<div class="mb-2">
+											<button
+												type="button"
+												class="relative group overflow-hidden rounded-lg border border-gray-200 hover:border-[var(--color-sunset-orange)] transition-colors"
+												on:click={() => openImageModal(editingProduct.image_1)}
+											>
+												<img
+													src={editingProduct.image_1}
+													alt="Imagem Principal"
+													class="h-20 w-20 object-cover"
+												/>
+												<div
+													class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center"
+												>
+													<span
+														class="text-white opacity-0 group-hover:opacity-100 text-xs font-bold bg-black/50 px-2 py-1 rounded"
+														>Ver</span
+													>
+												</div>
+											</button>
 										</div>
 									{/if}
 									<input
@@ -392,8 +424,26 @@
 										for="image_2">Imagem 2 (Opcional)</label
 									>
 									{#if editingProduct?.image_2}
-										<div class="mb-2 text-xs text-gray-500">
-											Atual: {editingProduct.image_2.split('/').pop()}
+										<div class="mb-2">
+											<button
+												type="button"
+												class="relative group overflow-hidden rounded-lg border border-gray-200 hover:border-[var(--color-sunset-orange)] transition-colors"
+												on:click={() => openImageModal(editingProduct.image_2)}
+											>
+												<img
+													src={editingProduct.image_2}
+													alt="Imagem 2"
+													class="h-20 w-20 object-cover"
+												/>
+												<div
+													class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center"
+												>
+													<span
+														class="text-white opacity-0 group-hover:opacity-100 text-xs font-bold bg-black/50 px-2 py-1 rounded"
+														>Ver</span
+													>
+												</div>
+											</button>
 										</div>
 									{/if}
 									<input
@@ -410,8 +460,26 @@
 										for="image_3">Imagem 3 (Opcional)</label
 									>
 									{#if editingProduct?.image_3}
-										<div class="mb-2 text-xs text-gray-500">
-											Atual: {editingProduct.image_3.split('/').pop()}
+										<div class="mb-2">
+											<button
+												type="button"
+												class="relative group overflow-hidden rounded-lg border border-gray-200 hover:border-[var(--color-sunset-orange)] transition-colors"
+												on:click={() => openImageModal(editingProduct.image_3)}
+											>
+												<img
+													src={editingProduct.image_3}
+													alt="Imagem 3"
+													class="h-20 w-20 object-cover"
+												/>
+												<div
+													class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center"
+												>
+													<span
+														class="text-white opacity-0 group-hover:opacity-100 text-xs font-bold bg-black/50 px-2 py-1 rounded"
+														>Ver</span
+													>
+												</div>
+											</button>
 										</div>
 									{/if}
 									<input
@@ -527,37 +595,43 @@
 										<div class="flex items-center gap-4">
 											<div class="flex -space-x-4 hover:space-x-1 transition-all">
 												{#if product.image_1}
-													<div
-														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-30"
+													<button
+														type="button"
+														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-30 cursor-pointer hover:ring-[var(--color-sunset-orange)] transition-all"
+														on:click={() => openImageModal(product.image_1)}
 													>
 														<img
 															src={product.image_1}
 															alt={product.title}
 															class="h-full w-full object-cover"
 														/>
-													</div>
+													</button>
 												{/if}
 												{#if product.image_2}
-													<div
-														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-20"
+													<button
+														type="button"
+														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-20 cursor-pointer hover:ring-[var(--color-sunset-orange)] transition-all"
+														on:click={() => openImageModal(product.image_2)}
 													>
 														<img
 															src={product.image_2}
 															alt={product.title}
 															class="h-full w-full object-cover"
 														/>
-													</div>
+													</button>
 												{/if}
 												{#if product.image_3}
-													<div
-														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-10"
+													<button
+														type="button"
+														class="h-12 w-12 rounded-lg overflow-hidden bg-gray-100 ring-2 ring-white z-10 cursor-pointer hover:ring-[var(--color-sunset-orange)] transition-all"
+														on:click={() => openImageModal(product.image_3)}
 													>
 														<img
 															src={product.image_3}
 															alt={product.title}
 															class="h-full w-full object-cover"
 														/>
-													</div>
+													</button>
 												{/if}
 											</div>
 											<span class="font-medium text-gray-900">{product.title}</span>
@@ -651,32 +725,44 @@
 						>
 							<div class="flex flex-col gap-2">
 								{#if product.image_1}
-									<div class="h-24 w-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+									<button
+										type="button"
+										class="h-24 w-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-[var(--color-sunset-orange)] transition-all"
+										on:click={() => openImageModal(product.image_1)}
+									>
 										<img
 											src={product.image_1}
 											alt={product.title}
 											class="h-full w-full object-cover"
 										/>
-									</div>
+									</button>
 								{/if}
 								<div class="flex gap-2">
 									{#if product.image_2}
-										<div class="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+										<button
+											type="button"
+											class="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-[var(--color-sunset-orange)] transition-all"
+											on:click={() => openImageModal(product.image_2)}
+										>
 											<img
 												src={product.image_2}
 												alt={product.title}
 												class="h-full w-full object-cover"
 											/>
-										</div>
+										</button>
 									{/if}
 									{#if product.image_3}
-										<div class="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+										<button
+											type="button"
+											class="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-[var(--color-sunset-orange)] transition-all"
+											on:click={() => openImageModal(product.image_3)}
+										>
 											<img
 												src={product.image_3}
 												alt={product.title}
 												class="h-full w-full object-cover"
 											/>
-										</div>
+										</button>
 									{/if}
 								</div>
 							</div>
@@ -828,6 +914,43 @@
 						</button>
 					</form>
 				</div>
+			</div>
+		</div>
+	{/if}
+
+	<!-- Image Preview Modal -->
+	{#if showImageModal && selectedImage}
+		<div
+			class="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+			transition:fade
+			on:click|self={closeImageModal}
+		>
+			<div class="relative max-w-5xl max-h-[90vh] w-full flex items-center justify-center">
+				<button
+					on:click={closeImageModal}
+					class="absolute -top-12 right-0 text-white hover:text-[var(--color-sunset-orange)] transition-colors p-2"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-8 w-8"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				</button>
+				<img
+					src={selectedImage}
+					alt="Visualização ampliada"
+					class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+					in:scale={{ start: 0.9, duration: 300 }}
+				/>
 			</div>
 		</div>
 	{/if}
